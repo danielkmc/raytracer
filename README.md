@@ -9,7 +9,7 @@ This is a basic ray tracing project written in C++. It simulates the concept of 
 
 ## Components
 
-### Camera Class
+### Camera Class `camera.hpp`
 
 This class controls all aspects regarding camera positioning and rendering of the image, including field-of-view (FOV), depth-of-field effects, and pixel-sampling to create an anti-aliasing effect.
 
@@ -19,6 +19,8 @@ Field of view determines how much can be seen in the image at once and is set by
 | vfov=20 | vfov=50 | vfov=90 |
 | - | - | - |
 | ![20 vfov](images/three_spheres4.png) | ![20 vfov](images/three_spheres4_50vfov.png) | ![20 vfov](images/three_spheres4_90vfov.png) |
+
+As the vertical field of view increases, the horizontal increases to maintain the ratio between the viewport's height and width parameters.
 
 #### Depth of field
 
@@ -31,13 +33,29 @@ Here are three images, from left to right, where the first has no defocus angle 
 | - | - | - |
 | ![no defocus blur](images/three_spheres3.png) | ![defocus blur 5](images/three_spheres_5angle.png) | ![defocus blur 10](images/three_spheres_10angle.png) |
 
+The red sphere stays in focus since it is within the focus plane determined by the focus distance, while the dielectric and metal spheres become blurrier as the "lens" increases in size (defocus angle increasing).
+
 <!-- <p float="left">
    <img src="images/three_spheres3.png" width="33%" /> 
    <img src="images/three_spheres_5angle.png" width="33%" /> 
    <img src="images/three_spheres_10angle.png" width="33%" /> 
 </p> -->
 
-#### Anti-aliasing
+#### Antialiasing
+
+Antialiasing is the process that removes the jagged-ness of pixel boundaries between two different objects, typically done by taking a sample of the surroundings and blending the pixels that define the boundary and the surrounding areas. By blending the pixel boundaries, the image produces a softer boundary.
+
+Pixel sampling from a circle or a square are used in this project to provide antialiasing. Here are three images showing circle vs. square vsx no antialiasing:
+
+| No antialiasing | Circle sampling | Square sampling |
+| - | - | - |
+| ![no antialiasing](images/three_spheres4_noantialiasing.png) | ![circle sampling](images/three_spheres4_circle.png) | ![square sampling](images/three_spheres4_square.png) |
+
+Zooming in, we can see that the boundary between the red sphere and the background shows that the circle sampling makes a smoother edge opposed to square, and no antialiasing make the boundary appear rough:
+
+| No antialiasing | Circle sampling | Square sampling |
+| - | - | - |
+| ![no antialiasing](images/antialiasing_none.png) | ![circle sampling](images/antialiasing_circle.png) | ![square sampling](images/antialiasing_square.png) |
 
 #### Pixel Sampling
 
@@ -48,7 +66,7 @@ Increasing this parameter to 100 produces a significant improving in the rendere
 
 ---
 
-### Material Class
+### Material Class `material.hpp`
 
 This class provides the structure for all classes that inherit from it, and only provides the scatter function that computes the scattering of rays that hit objects. There are three kinds of materials defined:
 
@@ -58,12 +76,19 @@ This class provides the structure for all classes that inherit from it, and only
 
 ---
 
-### Hittable Class
+### Hittable Class `hittable.hpp`
 
+To determine if an object was hit by a ray and what to do after, the hittable class provides the details of the reaction the light will have after hitting: the material to determine what kind of light diffusion and the surface normal vector from the point where the ray hit the object.
+
+Whether we see the point is also determine by calculating whether the ray hit the surface on the side that we see. If the normal vector, pointing outwards from the surface, is in the opposite direction as the ray that we projected to produce it, then we know the surface is facing the camera.
+
+#### Hittable list (world) `hittable_list.hpp`
+
+This class is a list of hittable objects that are being rendered in the current image and provides a way to track all the hittable objects that rays can encounter.
 
 ---
 
-### Future changes
+## Future changes
 
 1. Different anti-aliasing methods
    1. gaussian blur

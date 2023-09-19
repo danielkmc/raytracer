@@ -1,5 +1,6 @@
 # Ray Tracing Rendering
 
+![ray tracing](images/raytracing.png)
 This is a basic ray tracing project written in C++. It simulates the concept of tracing light rays to objects to illuminate and project shadows. Currently, this project features:
 
 1. Light diffusion for metallic (reflective) and lambertian (matte) surfaces
